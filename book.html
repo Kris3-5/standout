@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Choose your stand · Happy Place Festival · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="wrap">
+    <a class="back-link" href="event.html?id=happy-place">Back to Happy Place Festival</a>
+    <div class="book-head">
+      <h1>Choose your stand</h1>
+      <p class="small" id="plan-sub"></p>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-row" style="margin:0" id="zone-filters"><strong>Show:</strong></div>
+      <div class="legend" aria-hidden="true">
+        <span>Available</span><span class="l-pick">Your pick</span><span class="l-booked">Booked</span>
+      </div>
+    </div>
+
+    <div class="book-layout">
+      <div class="site-plan" id="site-plan" aria-label="Tatton Park site plan">
+        <div class="landmark landmark--stage"><h3>Main stage</h3><p>Talks & live music</p></div>
+        <div data-zone="sponsor"></div>
+        <div data-zone="wellbeing"></div>
+        <div class="landmark landmark--tents"><h3>Workshop tents</h3><p>Yoga, breathwork & creative sessions</p></div>
+        <div data-zone="market" class="zone--wide"></div>
+        <div data-zone="food"></div>
+        <div class="landmark landmark--entrance" style="align-self:end"><h3>Main entrance</h3><p>Visitor arrival & info point</p></div>
+      </div>
+
+      <aside class="panel pick-panel" id="pick-panel" aria-live="polite"></aside>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("step1");
+    renderFooter();
+
+    const total = ZONES.reduce((n, z) => n + z.stands.length, 0);
+    const booked = ZONES.reduce((n, z) => n + z.booked.length, 0);
+    document.getElementById("plan-sub").textContent =
+      `Tatton Park site plan · ${total - booked} of ${total} stands available · example pricing`;
+
+    const state = { stand: qs("stand"), extras: new Set(), boost: true };
+
+    /* Draw each zone */
+    ZONES.forEach(z => {
+      const slot = document.querySelector(`[data-zone="${z.id}"]`);
+      slot.classList.add("zone");
+      slot.style.borderTopColor = z.colour;
+      slot.style.setProperty("--zone", z.colour);
+      slot.style.setProperty("--zone-soft", z.soft);
+      slot.innerHTML = `
+        <div class="zone__head"><h3>${z.name}</h3><span>${z.size} · ${money(z.price)}</span></div>
+        <div class="stand-grid">
+          ${z.stands.map(code => {
+            const isBooked = z.booked.includes(code);
+            return `<button type="button" class="stand" data-code="${code}"
+              aria-pressed="false" ${isBooked ? "disabled" : ""}
+              aria-label="Stand ${code}, ${isBooked ? "booked" : money(z.price)}">${code}</button>`;
+          }).join("")}
+        </div>`;
+    });
+
+    /* Zone filter chips */
+    const filterBox = document.getElementById("zone-filters");
+    const startZone = qs("zone") || "All zones";
+    ["All zones", ...ZONES.map(z => z.filter)].forEach(name => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = name;
+      b.setAttribute("aria-pressed", name === startZone);
+      b.onclick = () => applyFilter(name);
+      filterBox.appendChild(b);
+    });
+    function applyFilter(name) {
+      filterBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.textContent === name));
+      ZONES.forEach(z => {
+        document.querySelector(`[data-zone="${z.id}"]`).hidden = !(name === "All zones" || z.filter === name);
+      });
+    }
+    applyFilter(startZone);
+
+    /* Stand selection */
+    document.getElementById("site-plan").addEventListener("click", ev => {
+      const btn = ev.target.closest(".stand");
+      if (!btn || btn.disabled) return;
+      state.stand = btn.dataset.code;
+      drawPanel();
+    });
+
+    function zoneOf(code) { return ZONES.find(z => z.stands.includes(code)); }
+
+    function drawPanel() {
+      document.querySelectorAll(".stand").forEach(b =>
+        b.setAttribute("aria-pressed", b.dataset.code === state.stand));
+
+      const panel = document.getElementById("pick-panel");
+      const zone = state.stand && zoneOf(state.stand);
+      if (!zone) {
+        panel.innerHTML = `
+          <div class="empty-pick">
+            <p class="pick-panel__label">YOUR PICK</p>
+            <h3 style="margin:10px 0">Pick a stand on the plan</h3>
+            <p class="small muted">Tap any outlined stand to see its price and add extras.</p>
+          </div>`;
+        return;
+      }
+
+      const boostPrice = BOOSTS.find(b => b.id === "spotlight").price;
+      const extrasTotal = EXTRAS.filter(x => state.extras.has(x.id)).reduce((n, x) => n + x.price, 0);
+      const subtotal = zone.price + extrasTotal + (state.boost ? boostPrice : 0);
+      const fee = subtotal * BOOKING_FEE;
+
+      panel.innerHTML = `
+        <p class="pick-panel__label">YOUR PICK</p>
+        <h2>Stand ${state.stand}</h2>
+        <p class="small">${zone.name} · ${zone.size}</p>
+        <div class="line line--strong"><span>Stand</span><span>${money(zone.price)}</span></div>
+        <p class="h-body small" style="margin:10px 0 2px">Add extras</p>
+        ${EXTRAS.map(x => `
+          <label class="extra"><input type="checkbox" data-extra="${x.id}" ${state.extras.has(x.id) ? "checked" : ""}>
+            ${x.name}<b>+${money(x.price)}</b></label>`).join("")}
+        <label class="extra extra--boost"><input type="checkbox" id="boost" ${state.boost ? "checked" : ""}>
+          <span><strong>Spotlight boost</strong><small>Featured in visitor emails & the festival app</small></span><b>+${money(boostPrice)}</b></label>
+        <hr class="divider">
+        <div class="line"><span>Subtotal</span><span>${money(subtotal)}</span></div>
+        <div class="line"><span>Booking fee (4%)</span><span>${money(fee)}</span></div>
+        <div class="line line--total"><span>Total</span><span>${money(subtotal + fee)}</span></div>
+        <a class="btn btn--pink btn--block" style="margin-top:16px" id="go">Continue to checkout</a>
+        <p class="hold-note">Stand held for 15 minutes while you check out</p>`;
+
+      panel.querySelectorAll("[data-extra]").forEach(cb => cb.onchange = () => {
+        cb.checked ? state.extras.add(cb.dataset.extra) : state.extras.delete(cb.dataset.extra);
+        drawPanel();
+      });
+      panel.querySelector("#boost").onchange = e => { state.boost = e.target.checked; drawPanel(); };
+
+      const params = new URLSearchParams({
+        stand: state.stand,
+        extras: [...state.extras].join(","),
+        boost: state.boost ? "spotlight" : "none"
+      });
+      panel.querySelector("#go").href = "checkout.html?" + params;
+    }
+
+    drawPanel();
+  </script>
+</body>
+</html>

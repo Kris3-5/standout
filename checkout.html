@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Your details · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="wrap">
+    <a class="back-link" id="back" href="book.html">Back to floor plan</a>
+    <h1 style="margin-bottom:30px">Almost there</h1>
+
+    <div class="checkout-layout">
+      <form id="details" novalidate>
+        <h3 class="h-body" style="font-size:1.25rem;margin-bottom:14px">Your business</h3>
+        <div class="form-grid">
+          <div class="field"><label for="biz">Business name</label><input id="biz" value="Calm Corner Candles" autocomplete="organization"></div>
+          <div class="field"><label for="contact">Contact name</label><input id="contact" placeholder="Your full name" autocomplete="name"></div>
+          <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="you@business.co.uk" autocomplete="email"></div>
+          <div class="field"><label for="cat">Category</label>
+            <select id="cat">
+              <option>Wellness & self-care</option><option>Food & drink</option><option>Books & stationery</option>
+              <option>Fitness & movement</option><option>Beauty</option><option>Charities</option><option>Kids & family</option>
+            </select>
+          </div>
+          <div class="field field--full"><label for="what">What will you be selling or showing?</label>
+            <textarea id="what" placeholder="A couple of lines for the organiser and your public listing"></textarea></div>
+        </div>
+
+        <div class="boost-box">
+          <h3>Get more visitors to your stand</h3>
+          <p class="small" style="margin:0">Boosts put your business in front of ticket holders who match your category, before and during the festival.</p>
+          <div class="boost-options" id="boosts"></div>
+        </div>
+
+        <h3 class="h-body" style="font-size:1.25rem;margin:30px 0 0">Payment</h3>
+        <div class="pay-opts">
+          <label class="pay-opt"><input type="radio" name="pay" value="card" checked> Card</label>
+          <label class="pay-opt"><input type="radio" name="pay" value="invoice"> Pay by invoice (30 days)</label>
+          <label class="pay-opt"><input type="radio" name="pay" value="deposit"> 50% deposit now</label>
+        </div>
+      </form>
+
+      <aside class="summary" aria-live="polite">
+        <h2>Order summary</h2>
+        <p class="small">Happy Place Festival<br>Tatton Park · Summer 2027</p>
+        <div id="lines"></div>
+        <label class="terms"><input type="checkbox" id="terms"> I agree to the organiser's exhibitor terms</label>
+        <button class="btn btn--pink btn--block" id="pay" disabled>Pay</button>
+        <p class="hold-note">Prices are examples for this preview. No real payment is taken.</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("step2");
+    renderFooter();
+
+    const code = qs("stand") || "W4";
+    const zone = ZONES.find(z => z.stands.includes(code)) || ZONES[1];
+    const extras = (qs("extras") || "").split(",").filter(Boolean);
+    let boost = qs("boost") || "spotlight";
+
+    document.getElementById("back").href = `book.html?stand=${code}`;
+
+    const boostBox = document.getElementById("boosts");
+    function drawBoosts() {
+      boostBox.innerHTML = BOOSTS.map(b => `
+        <button type="button" class="boost-opt" data-id="${b.id}" aria-pressed="${b.id === boost}">
+          <strong>${b.name}</strong><span>${b.desc}</span><b>${b.price ? "+" + money(b.price) : "Free"}</b>
+        </button>`).join("");
+    }
+    boostBox.addEventListener("click", e => {
+      const b = e.target.closest(".boost-opt");
+      if (!b) return;
+      boost = b.dataset.id;
+      drawBoosts(); drawSummary();
+    });
+
+    function totals() {
+      const items = [[`Stand ${code} · ${zone.name}`, zone.price]];
+      EXTRAS.filter(x => extras.includes(x.id)).forEach(x => items.push([x.name, x.price]));
+      const b = BOOSTS.find(x => x.id === boost);
+      if (b.price) items.push([b.name + " boost", b.price]);
+      const sub = items.reduce((n, [, p]) => n + p, 0);
+      const fee = sub * BOOKING_FEE;
+      return { items, fee, total: sub + fee };
+    }
+
+    function drawSummary() {
+      const t = totals();
+      const payMode = document.querySelector("[name=pay]:checked").value;
+      const dueNow = payMode === "deposit" ? t.total / 2 : payMode === "invoice" ? 0 : t.total;
+      document.getElementById("lines").innerHTML =
+        t.items.map(([n, p]) => `<div class="line"><span>${n}</span><span>${money(p)}</span></div>`).join("") +
+        `<div class="line"><span>Booking fee (4%)</span><span>${money(t.fee)}</span></div>
+         <div class="line line--total"><span>Total</span><span>${money(t.total)}</span></div>`;
+      document.getElementById("pay").textContent =
+        payMode === "invoice" ? "Book and send invoice" :
+        payMode === "deposit" ? `Pay deposit ${money(dueNow)}` : `Pay ${money(t.total)}`;
+    }
+
+    document.querySelectorAll("[name=pay]").forEach(r => r.onchange = drawSummary);
+    const terms = document.getElementById("terms");
+    const pay = document.getElementById("pay");
+    terms.onchange = () => pay.disabled = !terms.checked;
+
+    pay.onclick = () => {
+      const t = totals();
+      const params = new URLSearchParams({
+        stand: code,
+        biz: document.getElementById("biz").value || "Your business",
+        total: t.total.toFixed(2),
+        pay: document.querySelector("[name=pay]:checked").value,
+        boost
+      });
+      location.href = "confirmation.html?" + params;
+    };
+
+    drawBoosts();
+    drawSummary();
+  </script>
+</body>
+</html>
