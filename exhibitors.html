@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Find exhibitors · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="wrap">
+    <div class="dir-head">
+      <div>
+        <h1>Find exhibitors</h1>
+        <p class="muted" style="margin:10px 0 0">Brands looking for events like yours. Invite them straight to a zone.</p>
+      </div>
+      <span class="chip chip--pink" id="shortlist-count">Shortlist: 0</span>
+    </div>
+
+    <div class="dir-tools">
+      <div class="dir-tools__row">
+        <label class="sr-only" for="q">Search exhibitors</label>
+        <input type="search" id="q" placeholder="Search by name or what they sell">
+        <label class="sr-only" for="city">Location</label>
+        <select id="city"><option value="">Anywhere</option></select>
+      </div>
+      <div class="chips" id="cats" role="group" aria-label="Category"></div>
+      <div class="dir-tools__row">
+        <label class="toggle"><input type="checkbox" id="insured"> Insurance on file</label>
+        <label class="toggle"><input type="checkbox" id="power"> Doesn't need power</label>
+        <label class="toggle"><input type="checkbox" id="saved"> Shortlisted only</label>
+      </div>
+    </div>
+
+    <p class="dir-count" id="count" aria-live="polite"></p>
+    <div class="ex-grid" id="grid"></div>
+  </main>
+
+  <dialog class="profile" id="profile" aria-labelledby="p-name">
+    <div class="profile__top" id="p-top">
+      <button class="profile__close" type="button" id="p-close" aria-label="Close profile">×</button>
+    </div>
+    <div class="profile__body">
+      <h2 id="p-name"></h2>
+      <p class="ex-card__meta" id="p-meta"></p>
+      <p style="margin-top:14px" id="p-about"></p>
+      <ul class="chips" id="p-tags"></ul>
+      <dl class="profile__facts">
+        <div><dt>Events exhibited</dt><dd id="p-events"></dd></div>
+        <div><dt>Usual stand</dt><dd id="p-stand"></dd></div>
+        <div><dt>Insurance</dt><dd id="p-ins"></dd></div>
+      </dl>
+      <p style="margin:0"><strong>Recently exhibited at</strong></p>
+      <ul class="profile__past" id="p-past"></ul>
+      <div class="invite">
+        <strong>Invite to Happy Place Festival</strong>
+        <div class="invite__row">
+          <label class="sr-only" for="p-zone">Zone</label>
+          <select id="p-zone"></select>
+          <button class="btn btn--pink" type="button" id="p-invite">Send invite</button>
+        </div>
+        <span class="small">They'll get an email with a link to book a stand in that zone before it opens to everyone.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("organiser", "find");
+    renderFooter();
+
+    const saved = new Set(["little-green-kitchen"]);
+    const invited = new Set();
+    let cat = "All";
+    const topColour = { pink: "var(--pink)", teal: "var(--teal)", yellow: "var(--yellow)", violet: "var(--violet)" };
+    const initials = (name) => name.split(/\s+/).filter(w => /[A-Za-z]/.test(w[0])).slice(0, 2).map(w => w[0]).join("");
+    const $ = id => document.getElementById(id);
+
+    $("cats").innerHTML = ["All", ...EXHIBITOR_CATEGORIES].map(c => `<button class="chip" type="button" aria-pressed="${c === cat}">${c}</button>`).join("");
+    $("city").innerHTML += [...new Set(EXHIBITORS.map(e => e.city))].sort().map(c => `<option>${c}</option>`).join("");
+    $("p-zone").innerHTML = ZONES.map(z => `<option value="${z.id}">${z.name} (${z.size}, ${money(z.price)})</option>`).join("");
+
+    function filtered() {
+      const q = $("q").value.trim().toLowerCase();
+      return EXHIBITORS.filter(e =>
+        (cat === "All" || e.cat === cat) &&
+        (!$("city").value || e.city === $("city").value) &&
+        (!$("insured").checked || e.insured) &&
+        (!$("power").checked || !e.power) &&
+        (!$("saved").checked || saved.has(e.id)) &&
+        (!q || [e.name, e.cat, e.line, ...e.tags].join(" ").toLowerCase().includes(q)));
+    }
+
+    function draw() {
+      const list = filtered();
+      $("count").textContent = `${list.length} exhibitor${list.length === 1 ? "" : "s"}`;
+      $("shortlist-count").textContent = `Shortlist: ${saved.size}`;
+      $("grid").innerHTML = list.length ? list.map(e => `
+        <article class="ex-card">
+          <div class="ex-card__top" style="background:${topColour[e.colour]}">
+            <span class="ex-card__mono" aria-hidden="true">${initials(e.name)}</span>
+            <button class="ex-card__save" type="button" data-save="${e.id}" aria-pressed="${saved.has(e.id)}" aria-label="Shortlist ${e.name}">♥</button>
+          </div>
+          <div class="ex-card__body">
+            <h3>${e.name}</h3>
+            <p class="ex-card__meta">${e.cat}, ${e.city}</p>
+            <p class="ex-card__line">${e.line}</p>
+            <div class="ex-card__foot">
+              <span class="tick${e.insured ? "" : " tick--warn"}">${e.insured ? "Insurance on file" : "Insurance missing"}</span>
+              <button class="btn btn--outline btn--sm" type="button" data-open="${e.id}">${invited.has(e.id) ? "Invited" : "View profile"}</button>
+            </div>
+          </div>
+        </article>`).join("")
+        : `<div class="empty-state" style="grid-column:1/-1"><p><strong>No exhibitors match those filters.</strong></p><button class="btn btn--outline btn--sm" type="button" id="reset">Clear filters</button></div>`;
+    }
+
+    $("cats").addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      cat = b.textContent;
+      $("cats").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+      draw();
+    });
+    ["q", "city", "insured", "power", "saved"].forEach(id => $(id).addEventListener("input", draw));
+
+    $("grid").addEventListener("click", e => {
+      const s = e.target.closest("[data-save]");
+      if (s) {
+        const id = s.dataset.save;
+        saved.has(id) ? saved.delete(id) : saved.add(id);
+        draw(); return;
+      }
+      const o = e.target.closest("[data-open]");
+      if (o) openProfile(o.dataset.open);
+      if (e.target.id === "reset") {
+        $("q").value = ""; $("city").value = ""; ["insured", "power", "saved"].forEach(id => $(id).checked = false);
+        cat = "All"; $("cats").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.textContent === "All"));
+        draw();
+      }
+    });
+
+    let current = null;
+    function openProfile(id) {
+      const e = EXHIBITORS.find(x => x.id === id); current = e;
+      const art = blobArt(e.colour);
+      $("p-top").style.background = art.bg;
+      $("p-top").querySelectorAll(".blob").forEach(b => b.remove());
+      $("p-top").insertAdjacentHTML("beforeend", art.html);
+      $("p-name").textContent = e.name;
+      $("p-meta").textContent = `${e.cat}, ${e.city}`;
+      $("p-about").textContent = e.about;
+      $("p-tags").innerHTML = e.tags.map(t => `<li class="chip chip--small bg-yellow">${t}</li>`).join("");
+      $("p-events").textContent = e.events;
+      $("p-stand").textContent = e.stand + (e.power ? ", power" : "");
+      $("p-ins").textContent = e.insured ? "On file" : "Missing";
+      $("p-past").innerHTML = e.past.map(p => `<li>${p}</li>`).join("");
+      const zone = ZONES.find(z => z.filter === ({ "Food & drink": "Food", "Wellness & self-care": "Wellbeing", "Fitness & movement": "Wellbeing" }[e.cat] || "Market"));
+      $("p-zone").value = zone.id;
+      $("p-invite").textContent = invited.has(e.id) ? "Invite sent" : "Send invite";
+      $("p-invite").disabled = invited.has(e.id);
+      $("profile").showModal();
+    }
+    $("p-close").onclick = () => $("profile").close();
+    $("profile").addEventListener("click", e => { if (e.target === $("profile")) $("profile").close(); });
+    $("p-invite").onclick = () => {
+      invited.add(current.id);
+      const z = ZONES.find(z => z.id === $("p-zone").value);
+      $("p-invite").textContent = "Invite sent"; $("p-invite").disabled = true;
+      toast(`Invite sent to ${current.name} for ${z.name}`);
+      draw();
+    };
+
+    draw();
+  </script>
+</body>
+</html>

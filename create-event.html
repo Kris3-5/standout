@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Create an event · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="wrap">
+    <div class="dash-title">
+      <div>
+        <p>New event</p>
+        <h1 id="page-title">Create an event</h1>
+      </div>
+      <button class="btn btn--outline" type="button" id="save-draft">Save draft</button>
+    </div>
+
+    <ol class="wizard-tabs" aria-label="Create event steps">
+      <li><button type="button" data-go="0">1. Event details</button></li>
+      <li><button type="button" data-go="1">2. Floor plan</button></li>
+      <li><button type="button" data-go="2">3. Review and publish</button></li>
+    </ol>
+
+    <!-- ========== 1. Details ========== -->
+    <section class="wiz-panel" data-panel="0" style="padding-top:0">
+      <form class="form-stack" id="details" style="max-width:760px">
+        <div class="form-two">
+          <div class="field"><label for="ev-name">Event name</label><input id="ev-name" value="Happy Place Festival"></div>
+          <div class="field"><label for="ev-type">Type</label>
+            <select id="ev-type"><option>Festival</option><option>Market</option><option>Fair</option><option>Trade show</option><option>Conference</option></select></div>
+        </div>
+        <div class="form-two">
+          <div class="field"><label for="ev-venue">Venue</label><input id="ev-venue" value="Tatton Park"></div>
+          <div class="field"><label for="ev-town">Town or city</label><input id="ev-town" value="Knutsford, Cheshire"></div>
+        </div>
+        <div class="form-two">
+          <div class="field"><label for="ev-start">First day</label><input id="ev-start" type="date"></div>
+          <div class="field"><label for="ev-end">Last day</label><input id="ev-end" type="date"></div>
+        </div>
+        <div class="form-two">
+          <div class="field"><label for="ev-visitors">Expected visitors</label><input id="ev-visitors" inputmode="numeric" placeholder="e.g. 20,000"></div>
+          <div class="field"><label for="ev-deadline">Exhibitor paperwork due</label><input id="ev-deadline" type="date"></div>
+        </div>
+        <div class="field"><label for="ev-desc">Description for exhibitors</label>
+          <textarea id="ev-desc" rows="4">A weekend of talks, workshops, movement, music and good food, all built around feeling better.</textarea></div>
+
+        <div class="field">
+          <span style="font-size:.85rem;font-weight:700">How do exhibitors get a stand?</span>
+          <div class="switch-row">
+            <label class="switch-opt"><input type="radio" name="mode" value="instant" checked><span><strong>Instant booking</strong><span>They pick a stand and pay straight away.</span></span></label>
+            <label class="switch-opt"><input type="radio" name="mode" value="apply"><span><strong>Apply to book</strong><span>You approve each exhibitor before they pay.</span></span></label>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="ev-deposit" checked> Let exhibitors pay a 50% deposit</label>
+
+        <div class="form-actions"><span></span><button class="btn btn--pink" type="button" data-go="1">Next: floor plan</button></div>
+      </form>
+    </section>
+
+    <!-- ========== 2. Floor plan ========== -->
+    <section class="wiz-panel" data-panel="1" hidden style="padding-top:0">
+      <div class="editor">
+        <aside class="tools" aria-label="Floor plan tools">
+          <div>
+            <h3>Zones</h3>
+            <div class="tool-list" id="zone-tools"></div>
+            <button class="btn btn--outline btn--sm" type="button" id="add-zone" style="margin-top:10px">Add zone</button>
+          </div>
+          <div>
+            <h3>Site features</h3>
+            <div class="mark-tools" id="mark-tools">
+              <button type="button" data-tool="stage" aria-pressed="false">Stage</button>
+              <button type="button" data-tool="entrance" aria-pressed="false">Entrance</button>
+              <button type="button" data-tool="facility" aria-pressed="false">Toilets & first aid</button>
+              <button type="button" data-tool="erase" aria-pressed="false">Eraser</button>
+            </div>
+          </div>
+          <div class="panel" style="padding:18px">
+            <h3>Your plan</h3>
+            <div class="plan-summary" id="plan-summary"></div>
+          </div>
+        </aside>
+
+        <div>
+          <div class="canvas-wrap">
+            <div class="canvas-head">
+              <p id="tool-hint"></p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn--white btn--sm" type="button" id="template">Use example layout</button>
+                <button class="btn btn--white btn--sm" type="button" id="clear">Clear plan</button>
+              </div>
+            </div>
+            <div class="fp-grid" id="fp" role="grid" aria-label="Site grid. Choose a tool, then click or drag across squares."></div>
+          </div>
+          <p class="small muted" style="margin-top:10px">Each square is one stand. Stand numbers update as you paint, in reading order.</p>
+          <div class="form-actions">
+            <button class="btn btn--outline" type="button" data-go="0">Back</button>
+            <button class="btn btn--pink" type="button" data-go="2">Next: review</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. Review ========== -->
+    <section class="wiz-panel" data-panel="2" hidden style="padding-top:0">
+      <div class="review-grid">
+        <div style="display:grid;gap:22px">
+          <div class="mini-preview">
+            <div class="mini-preview__art" id="rv-art"></div>
+            <div class="mini-preview__body">
+              <h3 id="rv-name"></h3>
+              <p class="event-card__meta" id="rv-where"></p>
+              <p class="small" id="rv-desc" style="margin:10px 0 0"></p>
+            </div>
+          </div>
+          <div class="panel" style="padding:20px">
+            <h3 class="h-body" style="font-size:1.05rem;margin-bottom:12px">Stands on sale</h3>
+            <div class="plan-summary" id="rv-zones"></div>
+          </div>
+        </div>
+
+        <div class="publish-box" id="publish-box">
+          <h2 style="font-size:1.8rem;margin-bottom:14px">Ready to publish?</h2>
+          <ul class="checklist-ok" id="rv-checks"></ul>
+          <div class="line"><span>Listing fee</span><span id="rv-fee"></span></div>
+          <div class="line"><span>Commission on stand sales</span><span id="rv-comm"></span></div>
+          <div class="line line--total"><span>Due today</span><span id="rv-due"></span></div>
+          <button class="btn btn--yellow btn--block" type="button" id="publish" style="margin-top:18px">Publish event</button>
+          <p class="small" style="margin:12px 0 0;opacity:.8">Your event page goes live and exhibitors can start booking.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("organiser", "create");
+    renderFooter();
+    const $ = id => document.getElementById(id);
+
+    /* ---------- Wizard ---------- */
+    const tabs = [...document.querySelectorAll(".wizard-tabs button")];
+    let stepNow = 0;
+    function go(n) {
+      stepNow = n;
+      document.querySelectorAll("[data-panel]").forEach(p => p.hidden = Number(p.dataset.panel) !== n);
+      tabs.forEach((t, i) => { t.toggleAttribute("aria-current", i === n); if (i === n) t.setAttribute("aria-current", "step"); t.classList.toggle("is-done", i < n); });
+      if (n === 2) drawReview();
+      window.scrollTo({ top: 0 });
+    }
+    document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(Number(b.dataset.go)); });
+    $("save-draft").onclick = () => toast("Draft saved");
+    $("ev-name").addEventListener("input", () => $("page-title").textContent = $("ev-name").value.trim() || "Create an event");
+    $("page-title").textContent = $("ev-name").value;
+
+    /* ---------- Floor plan state ---------- */
+    const COLS = 18, ROWS = 11;
+    const EXTRA_COLOURS = ["#ff7ad6", "#7fd3d6"];
+    let zones = ZONES.map(z => ({ id: z.id, name: z.name, size: z.size, price: z.price, colour: z.colour }));
+    let cells = Array(COLS * ROWS).fill(null);          // null | {t:"stand", z} | {t:"stage"} ...
+    let tool = { kind: "zone", id: "market" };
+
+    const fp = $("fp");
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cell"; b.dataset.i = i;
+      b.setAttribute("role", "gridcell");
+      fp.appendChild(b);
+    }
+
+    function paint(i) {
+      if (tool.kind === "zone") cells[i] = { t: "stand", z: tool.id };
+      else if (tool.id === "erase") cells[i] = null;
+      else cells[i] = { t: tool.id };
+    }
+    function rect(r0, r1, c0, c1, val) {
+      for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) cells[r * COLS + c] = val;
+    }
+    function template() {
+      cells = Array(COLS * ROWS).fill(null);
+      zones = ZONES.map(z => ({ id: z.id, name: z.name, size: z.size, price: z.price, colour: z.colour }));
+      rect(0, 1, 6, 11, { t: "stage" });
+      rect(3, 3, 7, 10, { t: "stand", z: "sponsor" });
+      rect(1, 2, 0, 4, { t: "stand", z: "wellbeing" });
+      rect(5, 5, 1, 8, { t: "stand", z: "market" });
+      rect(7, 7, 1, 8, { t: "stand", z: "market" });
+      rect(5, 5, 12, 16, { t: "stand", z: "food" });
+      rect(7, 7, 12, 16, { t: "stand", z: "food" });
+      rect(9, 10, 0, 1, { t: "facility" });
+      rect(10, 10, 8, 9, { t: "entrance" });
+    }
+
+    const prefix = z => z.name.trim().charAt(0).toUpperCase() || "Z";
+    function zonePrefixes() {
+      const seen = {}, out = {};
+      zones.forEach(z => { let p = prefix(z); if (seen[p]) p = p + (seen[p] + 1); seen[prefix(z)] = (seen[prefix(z)] || 0) + 1; out[z.id] = p; });
+      return out;
+    }
+
+    function counts() {
+      const c = {}; zones.forEach(z => c[z.id] = 0);
+      cells.forEach(x => { if (x && x.t === "stand" && c[x.z] !== undefined) c[x.z]++; });
+      return c;
+    }
+
+    function drawGrid() {
+      const pre = zonePrefixes(), n = {};
+      const names = { stage: "Stage", entrance: "Entrance", facility: "Toilets & first aid" };
+      [...fp.children].forEach((el, i) => {
+        const x = cells[i];
+        el.className = "cell"; el.textContent = ""; el.style.removeProperty("--c");
+        if (!x) { el.setAttribute("aria-label", "Empty"); return; }
+        if (x.t === "stand") {
+          const z = zones.find(z => z.id === x.z); if (!z) { cells[i] = null; return; }
+          n[z.id] = (n[z.id] || 0) + 1;
+          el.classList.add("is-stand"); el.style.setProperty("--c", z.colour);
+          el.textContent = pre[z.id] + n[z.id];
+          el.setAttribute("aria-label", `Stand ${pre[z.id]}${n[z.id]}, ${z.name}`);
+        } else {
+          el.classList.add("is-" + x.t);
+          el.setAttribute("aria-label", names[x.t]);
+          el.title = names[x.t];
+        }
+      });
+    }
+
+    function drawTools() {
+      const c = counts();
+      $("zone-tools").innerHTML = zones.map(z => {
+        const on = tool.kind === "zone" && tool.id === z.id;
+        return `<div class="zone-tool${on ? " is-active" : ""}">
+          <button class="zone-tool__pick" type="button" data-zone="${z.id}" aria-pressed="${on}">
+            <span class="swatch" style="background:${z.colour}"></span>${escapeHTML(z.name)}<em>${c[z.id]} stands</em>
+          </button>
+          ${on ? `<div class="zone-tool__fields">
+            <label>Name<input data-f="name" value="${escapeHTML(z.name)}"></label>
+            <label>Size<input data-f="size" value="${escapeHTML(z.size)}"></label>
+            <label>Price £<input data-f="price" inputmode="numeric" value="${z.price}"></label>
+          </div>
+          ${zones.length > 1 ? `<button class="btn btn--sm" type="button" data-remove="${z.id}" style="justify-self:start;padding:2px 0;font-size:.75rem;text-decoration:underline">Remove zone</button>` : ""}` : ""}
+        </div>`;
+      }).join("");
+      document.querySelectorAll("#mark-tools [data-tool]").forEach(b => b.setAttribute("aria-pressed", tool.kind === "mark" && tool.id === b.dataset.tool));
+      const label = tool.kind === "zone" ? `Painting: ${zones.find(z => z.id === tool.id)?.name} stands`
+        : { stage: "Painting: stage", entrance: "Painting: entrance", facility: "Painting: toilets & first aid", erase: "Eraser: click squares to clear them" }[tool.id];
+      $("tool-hint").textContent = label;
+    }
+
+    function drawSummary(target) {
+      const c = counts();
+      const total = zones.reduce((s, z) => s + c[z.id], 0);
+      const sales = zones.reduce((s, z) => s + c[z.id] * z.price, 0);
+      $(target).innerHTML = zones.map(z => `
+        <div class="line"><span><i class="dot" style="background:${z.colour}"></i>${escapeHTML(z.name)}</span><span>${c[z.id]} × ${money(z.price)}</span></div>`).join("") + `
+        <div class="line line--strong" style="border-top:1px solid var(--grey);margin-top:6px;padding-top:8px"><span>${total} stands</span><span>${money(sales)}</span></div>
+        <div class="line small muted"><span>If every stand sells, you keep</span><span>${money(Math.round(sales * (1 - PRICING.commission)))}</span></div>`;
+      return { total, sales };
+    }
+
+    function drawAll() { drawGrid(); drawTools(); drawSummary("plan-summary"); }
+    function escapeHTML(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+    /* painting: click, or press and drag (mouse, pen and touch) */
+    let painting = false;
+    fp.addEventListener("pointerdown", e => {
+      const el = e.target.closest(".cell"); if (!el) return;
+      painting = true; paint(Number(el.dataset.i)); drawGrid(); drawTools(); drawSummary("plan-summary");
+      e.preventDefault();
+    });
+    fp.addEventListener("pointermove", e => {
+      if (!painting) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY)?.closest(".cell");
+      if (!el || !fp.contains(el)) return;
+      paint(Number(el.dataset.i)); drawGrid();
+    });
+    window.addEventListener("pointerup", () => { if (painting) { painting = false; drawTools(); drawSummary("plan-summary"); } });
+    fp.addEventListener("keydown", e => {
+      const el = e.target.closest(".cell"); if (!el) return;
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); paint(Number(el.dataset.i)); drawAll(); el.focus(); }
+      const moves = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: COLS, ArrowUp: -COLS };
+      if (moves[e.key]) { e.preventDefault(); fp.children[Math.min(Math.max(Number(el.dataset.i) + moves[e.key], 0), COLS * ROWS - 1)].focus(); }
+    });
+
+    /* zone tools */
+    $("zone-tools").addEventListener("click", e => {
+      const p = e.target.closest("[data-zone]");
+      if (p) { tool = { kind: "zone", id: p.dataset.zone }; drawTools(); return; }
+      const r = e.target.closest("[data-remove]");
+      if (r) {
+        zones = zones.filter(z => z.id !== r.dataset.remove);
+        cells = cells.map(x => x && x.t === "stand" && x.z === r.dataset.remove ? null : x);
+        tool = { kind: "zone", id: zones[0].id }; drawAll();
+      }
+    });
+    $("zone-tools").addEventListener("input", e => {
+      const f = e.target.dataset.f; if (!f) return;
+      const z = zones.find(z => z.id === tool.id);
+      z[f] = f === "price" ? Math.max(0, Number(e.target.value.replace(/[^\d]/g, "")) || 0) : e.target.value;
+      drawGrid(); drawSummary("plan-summary");
+      const pick = document.querySelector(`[data-zone="${z.id}"]`);
+      if (pick && f === "name") pick.childNodes[2].textContent = z.name;
+    });
+    $("add-zone").onclick = () => {
+      if (zones.length >= 6) { toast("Six zones is the limit for now"); return; }
+      const used = zones.map(z => z.colour);
+      const colour = [...ZONES.map(z => z.colour), ...EXTRA_COLOURS].find(c => !used.includes(c)) || "#8d8295";
+      const id = "zone" + Date.now();
+      zones.push({ id, name: "New zone", size: "3m × 3m", price: 300, colour });
+      tool = { kind: "zone", id }; drawAll();
+      document.querySelector('#zone-tools [data-f="name"]')?.select();
+    };
+    $("mark-tools").addEventListener("click", e => {
+      const b = e.target.closest("[data-tool]"); if (!b) return;
+      tool = { kind: "mark", id: b.dataset.tool }; drawTools();
+    });
+    $("clear").onclick = () => { cells = Array(COLS * ROWS).fill(null); drawAll(); toast("Plan cleared"); };
+    $("template").onclick = () => { template(); tool = { kind: "zone", id: "market" }; drawAll(); };
+
+    /* ---------- Review ---------- */
+    function fmtDate(v) { return v ? new Date(v).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : ""; }
+    function drawReview() {
+      const name = $("ev-name").value.trim();
+      const a = blobArt("pink"); $("rv-art").style.background = a.bg; $("rv-art").innerHTML = a.html;
+      $("rv-name").textContent = name || "Untitled event";
+      const dates = $("ev-start").value ? fmtDate($("ev-start").value) + ($("ev-end").value && $("ev-end").value !== $("ev-start").value ? " to " + fmtDate($("ev-end").value) : "") : "Dates not set";
+      $("rv-where").textContent = `${[$("ev-venue").value, $("ev-town").value].filter(Boolean).join(", ") || "Venue not set"}. ${dates}`;
+      $("rv-desc").textContent = $("ev-desc").value;
+      const { total } = drawSummary("rv-zones");
+      const mode = document.querySelector('[name="mode"]:checked').value;
+      const checks = [
+        [!!name, "Event name added"],
+        [!!$("ev-start").value, $("ev-start").value ? "Dates set" : "Add your event dates"],
+        [total > 0, total ? `${total} stands on the floor plan` : "Paint at least one stand"],
+        [zones.every(z => z.price > 0), "Every zone has a price"],
+        [true, mode === "apply" ? "Exhibitors apply, you approve" : "Exhibitors book instantly"]
+      ];
+      $("rv-checks").innerHTML = checks.map(([ok, t]) => `<li${ok ? "" : ' class="is-missing"'}>${t}</li>`).join("");
+      $("rv-fee").textContent = money(PRICING.listingFee);
+      $("rv-comm").textContent = (PRICING.commission * 100) + "%";
+      $("rv-due").textContent = money(PRICING.listingFee);
+      const ready = !!name && total > 0;
+      $("publish").disabled = !ready;
+      $("publish").textContent = ready ? "Publish event" : "Add a name and stands to publish";
+    }
+    $("publish").onclick = () => {
+      $("publish-box").innerHTML = `
+        <h2 style="font-size:1.8rem;margin-bottom:12px">It's live</h2>
+        <p>${escapeHTML($("ev-name").value)} is open for bookings. Share the link with your exhibitors, or invite them from the directory.</p>
+        <div style="display:grid;gap:10px;margin-top:18px">
+          <a class="btn btn--yellow btn--block" href="event.html?id=happy-place">View event page</a>
+          <a class="btn btn--white btn--block" href="exhibitors.html">Invite exhibitors</a>
+          <a class="btn btn--block" style="color:var(--white)" href="organiser.html">Go to dashboard</a>
+        </div>`;
+      toast("Event published");
+    };
+
+    template();
+    drawAll();
+    go(0);
+  </script>
+</body>
+</html>

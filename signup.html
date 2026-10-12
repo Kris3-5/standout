@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Create your account · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="auth" id="auth">
+    <div class="onboard-progress" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+    <!-- Step 1: role -->
+    <section class="wiz-panel" data-step="0" style="padding:0">
+      <p class="step-count">Step 1 of 3</p>
+      <h1>What brings you here?</h1>
+      <p class="auth__lead muted">You can add the other side later from your account.</p>
+      <div class="role-cards">
+        <button class="role-card" type="button" data-role="exhibitor" aria-pressed="false">
+          <span class="role-card__art" id="art-ex"></span>
+          <span class="role-card__body"><strong>I exhibit at events</strong><span>Find events, book a stand and keep your paperwork in one place.</span></span>
+        </button>
+        <button class="role-card" type="button" data-role="organiser" aria-pressed="false">
+          <span class="role-card__art" id="art-org"></span>
+          <span class="role-card__body"><strong>I run events</strong><span>Sell stands from a live floor plan and get paid weekly.</span></span>
+        </button>
+      </div>
+      <div class="form-actions"><span></span><button class="btn btn--pink" type="button" id="to-account" disabled>Continue</button></div>
+    </section>
+
+    <!-- Step 2: account -->
+    <section class="wiz-panel" data-step="1" hidden style="padding:0">
+      <p class="step-count">Step 2 of 3</p>
+      <h1>Create your account</h1>
+      <p class="auth__lead muted">No password needed. We'll email you a link to sign in.</p>
+      <button class="btn btn--google btn--block" type="button" id="google">Continue with Google</button>
+      <div class="or-line">or use your email</div>
+      <form class="form-stack" id="account-form" novalidate>
+        <div class="form-two">
+          <div class="field"><label for="first">First name</label><input id="first" autocomplete="given-name" required></div>
+          <div class="field"><label for="last">Last name</label><input id="last" autocomplete="family-name"></div>
+        </div>
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" type="email" autocomplete="email" required aria-describedby="email-err">
+          <p class="field-error" id="email-err" hidden>Enter an email address like name@business.co.uk</p>
+        </div>
+        <label class="terms"><input type="checkbox" id="agree"> <span>I agree to the <a href="#">terms</a> and <a href="#">privacy policy</a>.</span></label>
+        <div class="form-actions" style="margin-top:4px">
+          <button class="btn btn--outline" type="button" data-back>Back</button>
+          <button class="btn btn--pink" type="submit">Create account</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Step 3a: exhibitor profile -->
+    <section class="wiz-panel" data-step="2" data-for="exhibitor" hidden style="padding:0">
+      <p class="step-count">Step 3 of 3</p>
+      <h1>Set up your profile</h1>
+      <p class="auth__lead muted">Organisers browse these profiles when they're looking for exhibitors.</p>
+      <div class="profile-build">
+        <form class="form-stack" id="ex-form">
+          <div class="field"><label for="biz">Business name</label><input id="biz" required placeholder="e.g. Kiln & Co"></div>
+          <div class="field">
+            <span style="font-size:.85rem;font-weight:700">What do you sell?</span>
+            <div class="chip-pick" id="ex-cat" role="group" aria-label="Category"></div>
+          </div>
+          <div class="form-two">
+            <div class="field"><label for="city">Based in</label><input id="city" placeholder="Town or city"></div>
+            <div class="field"><label for="web">Website or Instagram</label><input id="web" placeholder="@yourbrand"></div>
+          </div>
+          <div class="field">
+            <label for="line">One line about you</label>
+            <input id="line" maxlength="90" placeholder="Handmade ceramics with live wheel demos." aria-describedby="line-count">
+            <span class="hint" id="line-count">90 characters left</span>
+          </div>
+          <div class="form-two">
+            <div class="field"><label for="size">Usual stand size</label>
+              <select id="size"><option>3m × 3m</option><option>4m × 3m</option><option>6m × 3m</option><option>Bigger</option></select></div>
+            <div class="field"><span style="font-size:.85rem;font-weight:700">Power</span>
+              <label class="toggle" style="padding-top:10px"><input type="checkbox" id="power"> I usually need power</label></div>
+          </div>
+          <div class="field">
+            <span style="font-size:.85rem;font-weight:700">Logo</span>
+            <label class="logo-drop" for="logo">Upload a square logo (PNG or JPG)</label>
+            <input type="file" id="logo" accept="image/*" class="sr-only">
+          </div>
+        </form>
+        <div>
+          <p class="preview-label">How organisers will see you</p>
+          <div id="ex-preview"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn--outline" type="button" data-back>Back</button>
+        <button class="btn btn--pink" type="button" data-finish>Save profile</button>
+      </div>
+    </section>
+
+    <!-- Step 3b: organiser profile -->
+    <section class="wiz-panel" data-step="2" data-for="organiser" hidden style="padding:0">
+      <p class="step-count">Step 3 of 3</p>
+      <h1>Tell us about your events</h1>
+      <p class="auth__lead muted">This helps us suggest exhibitors and set up your first event.</p>
+      <form class="form-stack" id="org-form">
+        <div class="form-two">
+          <div class="field"><label for="org">Organisation</label><input id="org" placeholder="e.g. Croci Collective"></div>
+          <div class="field"><label for="job">Your role</label><input id="job" placeholder="e.g. Exhibitor manager"></div>
+        </div>
+        <div class="field">
+          <span style="font-size:.85rem;font-weight:700">What kind of events do you run?</span>
+          <div class="chip-pick" id="org-types" role="group" aria-label="Event types">
+            <button class="chip" type="button" aria-pressed="false">Festivals</button>
+            <button class="chip" type="button" aria-pressed="false">Markets & fairs</button>
+            <button class="chip" type="button" aria-pressed="false">Trade shows</button>
+            <button class="chip" type="button" aria-pressed="false">Conferences</button>
+            <button class="chip" type="button" aria-pressed="false">Community events</button>
+          </div>
+        </div>
+        <div class="form-two">
+          <div class="field"><label for="per-year">Events a year</label>
+            <select id="per-year"><option>1</option><option>2 to 5</option><option>6 to 20</option><option>More than 20</option></select></div>
+          <div class="field"><label for="typical">Typical number of stands</label>
+            <select id="typical"><option>Under 30</option><option>30 to 100</option><option>100 to 300</option><option>Over 300</option></select></div>
+        </div>
+        <div class="field"><label for="country">Country</label>
+          <select id="country"><option>United Kingdom</option><option>United States</option><option>Other</option></select></div>
+      </form>
+      <div class="form-actions">
+        <button class="btn btn--outline" type="button" data-back>Back</button>
+        <button class="btn btn--pink" type="button" data-finish>Finish setup</button>
+      </div>
+    </section>
+
+    <!-- Done -->
+    <section class="wiz-panel" data-step="3" hidden style="padding:0;text-align:center">
+      <div class="confirm__burst" aria-hidden="true">✓</div>
+      <h1 id="done-title"></h1>
+      <p class="muted" id="done-text" style="max-width:48ch;margin-inline:auto"></p>
+      <div class="done-next" id="done-next"></div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("auth", "signup");
+    renderFooter();
+
+    const panels = [...document.querySelectorAll(".wiz-panel")];
+    const bars = [...document.querySelectorAll(".onboard-progress span")];
+    let role = qs("role");
+    let step = 0;
+
+    function show(n) {
+      step = n;
+      panels.forEach(p => p.hidden = !(Number(p.dataset.step) === n && (!p.dataset.for || p.dataset.for === role)));
+      bars.forEach((b, i) => b.classList.toggle("is-on", i <= n));
+      window.scrollTo({ top: 0 });
+      const h = panels.find(p => !p.hidden)?.querySelector("h1");
+      if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+    }
+
+    /* Step 1: role */
+    const art = (id, colour) => { const a = blobArt(colour); const el = document.getElementById(id); el.style.background = a.bg; el.innerHTML = a.html; };
+    art("art-ex", "teal"); art("art-org", "pink");
+    const roleBtns = document.querySelectorAll("[data-role]");
+    function pickRole(r) {
+      role = r;
+      roleBtns.forEach(b => b.setAttribute("aria-pressed", b.dataset.role === r));
+      document.getElementById("to-account").disabled = !r;
+    }
+    roleBtns.forEach(b => b.onclick = () => pickRole(b.dataset.role));
+    document.getElementById("to-account").onclick = () => show(1);
+    if (role === "exhibitor" || role === "organiser") { pickRole(role); show(1); } else { role = null; show(0); }
+
+    document.querySelectorAll("[data-back]").forEach(b => b.onclick = () => show(step - 1));
+
+    /* Step 2: account */
+    const email = document.getElementById("email"), err = document.getElementById("email-err");
+    document.getElementById("account-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      err.hidden = ok; email.setAttribute("aria-invalid", !ok);
+      if (!ok) { email.focus(); return; }
+      if (!document.getElementById("agree").checked) { toast("Tick the box to accept the terms"); return; }
+      show(2);
+    });
+    document.getElementById("google").onclick = () => { toast("Google sign-in isn't connected in the preview"); show(2); };
+
+    /* Step 3a: exhibitor profile with live preview */
+    let cat = EXHIBITOR_CATEGORIES[2], logoURL = null;
+    const catBox = document.getElementById("ex-cat");
+    catBox.innerHTML = EXHIBITOR_CATEGORIES.map(c => `<button class="chip" type="button" aria-pressed="${c === cat}">${c}</button>`).join("");
+    catBox.addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      cat = b.textContent;
+      catBox.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+      drawPreview();
+    });
+    const val = id => document.getElementById(id).value.trim();
+    const initials = (name) => name.split(/\s+/).filter(w => /[A-Za-z]/.test(w[0])).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?";
+    function drawPreview() {
+      const name = val("biz") || "Your business";
+      const left = 90 - val("line").length;
+      document.getElementById("line-count").textContent = `${left} character${left === 1 ? "" : "s"} left`;
+      document.getElementById("ex-preview").innerHTML = `
+        <div class="ex-card">
+          <div class="ex-card__top" style="background:var(--teal)"><span class="ex-card__mono">${logoURL ? `<img src="${logoURL}" alt="">` : initials(name)}</span></div>
+          <div class="ex-card__body">
+            <h3>${escapeHTML(name)}</h3>
+            <p class="ex-card__meta">${cat}${val("city") ? ", " + escapeHTML(val("city")) : ""}</p>
+            <p class="ex-card__line">${escapeHTML(val("line")) || '<span class="muted">Your one-liner shows here.</span>'}</p>
+            <div class="ex-card__foot">
+              <span class="small"><strong>${document.getElementById("size").value}</strong>${document.getElementById("power").checked ? ", needs power" : ""}</span>
+              <span class="tick tick--warn">Insurance to add</span>
+            </div>
+          </div>
+        </div>`;
+    }
+    function escapeHTML(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+    document.getElementById("ex-form").addEventListener("input", drawPreview);
+    document.getElementById("ex-form").addEventListener("change", drawPreview);
+    document.getElementById("logo").addEventListener("change", e => {
+      const f = e.target.files[0]; if (!f) return;
+      logoURL = URL.createObjectURL(f); drawPreview();
+    });
+    drawPreview();
+
+    /* Step 3b: organiser chips */
+    document.getElementById("org-types").addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true");
+    });
+
+    /* Done */
+    document.querySelectorAll("[data-finish]").forEach(b => b.onclick = () => {
+      const first = val("first") || "there";
+      if (role === "exhibitor") {
+        document.getElementById("done-title").textContent = `You're all set, ${first}`;
+        document.getElementById("done-text").textContent = "Your profile is live, so organisers can find you and invite you to their events.";
+        document.getElementById("done-next").innerHTML = `
+          <a class="bg-violet" href="index.html"><strong>Find an event</strong><span class="small">Browse events taking exhibitors and book a stand.</span></a>
+          <a class="bg-yellow" href="exhibitor.html"><strong>Add your insurance</strong><span class="small">Upload it once and it's ready for every booking.</span></a>`;
+      } else {
+        document.getElementById("done-title").textContent = `Welcome aboard, ${first}`;
+        document.getElementById("done-text").textContent = "Your organiser account is ready. Set up your first event and draw its floor plan.";
+        document.getElementById("done-next").innerHTML = `
+          <a class="bg-pink" href="create-event.html"><strong>Create your first event</strong><span class="small">Details, floor plan and prices in about ten minutes.</span></a>
+          <a class="bg-teal" href="exhibitors.html"><strong>Browse exhibitors</strong><span class="small">See who's already looking for events like yours.</span></a>`;
+      }
+      show(3);
+    });
+  </script>
+</body>
+</html>

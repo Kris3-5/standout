@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>For organisers · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main>
+    <section class="org-hero">
+      <div class="wrap">
+        <div>
+          <h1>Sell every stand without the spreadsheet.</h1>
+          <p>Draw your floor plan, open bookings and let exhibitors pick and pay for their own pitch. Applications, paperwork and payouts all live in one place.</p>
+          <div class="org-hero__ctas">
+            <a class="btn btn--ink" href="signup.html?role=organiser">List your event</a>
+            <a class="btn btn--white" href="#pricing">See pricing</a>
+          </div>
+        </div>
+
+        <div class="sellout" aria-label="Example floor plan filling up with bookings">
+          <div class="sellout__top">
+            <p>Stand sales so far</p>
+            <span class="sellout__total" id="so-total">£0</span>
+          </div>
+          <div class="sellout__grid" id="so-grid"></div>
+          <p class="sellout__feed" id="so-feed" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="section-head"><h2>How it works</h2></div>
+      <ol class="how">
+        <li><h3>List your event and draw the site</h3><p>Add your dates and venue, then paint zones and stands onto a grid. Set a size and price per zone.</p></li>
+        <li><h3>Exhibitors book or apply</h3><p>They choose a stand on the live map and pay by card, deposit or invoice. Turn on applications if you want to vet who gets in.</p></li>
+        <li><h3>Get paid and stay organised</h3><p>Money lands in your account weekly. Insurance, risk assessments and arrival times are collected for you.</p></li>
+      </ol>
+    </section>
+
+    <section class="wrap">
+      <div class="section-head"><h2>Everything between "stands open" and "gates open"</h2></div>
+      <div class="feature-rows">
+        <div class="feature-row">
+          <div>
+            <h3>Draw your floor plan in minutes</h3>
+            <p>Paint stands straight onto a grid, mark the stage and entrances, and see your potential takings add up as you go. No CAD files, no PDFs.</p>
+            <p style="margin-top:14px"><a href="create-event.html"><strong>Try the floor plan editor</strong></a></p>
+          </div>
+          <div class="feature-demo bg-teal">
+            <div class="sellout__grid" id="mini-plan" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="feature-row">
+          <div>
+            <h3>Choose who exhibits</h3>
+            <p>Instant booking for open pitches, applications for the spots that matter. Approve with one click and the stand is released to that exhibitor.</p>
+          </div>
+          <div class="feature-demo panel" style="padding-block:6px">
+            <div id="demo-apps"></div>
+          </div>
+        </div>
+
+        <div class="feature-row">
+          <div>
+            <h3>Find exhibitors who fit your crowd</h3>
+            <p>Browse profiles of brands already on the platform, filtered by category, location and whether their insurance is on file. Invite them straight to a zone.</p>
+            <p style="margin-top:14px"><a href="exhibitors.html"><strong>Browse exhibitors</strong></a></p>
+          </div>
+          <div class="feature-demo bg-violet">
+            <div class="ex-grid" id="demo-ex" style="grid-template-columns:1fr 1fr"></div>
+          </div>
+        </div>
+
+        <div class="feature-row">
+          <div>
+            <h3>Paperwork done before setup day</h3>
+            <p>Every exhibitor gets a checklist with your deadlines. You see who's missing what, and reminders go out automatically.</p>
+          </div>
+          <div class="feature-demo bg-yellow">
+            <div class="bar-row"><div class="bar-row__top"><span>Public liability insurance</span><span>34 of 40</span></div><div class="bar" style="background:var(--white)"><span style="width:85%;background:var(--ink)"></span></div></div>
+            <div class="bar-row"><div class="bar-row__top"><span>Risk assessments</span><span>27 of 40</span></div><div class="bar" style="background:var(--white)"><span style="width:67.5%;background:var(--ink)"></span></div></div>
+            <div class="bar-row" style="margin-bottom:0"><div class="bar-row__top"><span>Arrival times confirmed</span><span>19 of 40</span></div><div class="bar" style="background:var(--white)"><span style="width:47.5%;background:var(--ink)"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="pricing">
+      <div class="section-head">
+        <h2>Pricing</h2>
+        <p class="muted">No monthly subscription. You only pay when you list an event and when stands sell.</p>
+      </div>
+      <div class="pricing">
+        <ul class="price-lines">
+          <li><span class="amt" id="p-listing"></span><span><strong>Per event you publish</strong><span class="small muted">Covers your event page, floor plan and exhibitor hub.</span></span></li>
+          <li><span class="amt" id="p-comm"></span><span><strong>Of stand sales</strong><span class="small muted">Taken from each payout. Card processing included.</span></span></li>
+          <li><span class="amt" id="p-fee"></span><span><strong>Booking fee paid by exhibitors</strong><span class="small muted">Added at their checkout, so it doesn't come out of your takings.</span></span></li>
+          <li><span class="amt" style="font-size:1.25rem">Optional</span><span><strong>Promotion campaigns</strong><span class="small muted">We run ads to find more visitors or exhibitors. You set the budget.</span></span></li>
+        </ul>
+
+        <div class="calc">
+          <h3>What you'd keep</h3>
+          <div class="slider">
+            <div class="slider__top"><label for="c-stands">Stands sold</label><output id="c-stands-out"></output></div>
+            <input type="range" id="c-stands" min="10" max="200" step="1" value="40">
+          </div>
+          <div class="slider">
+            <div class="slider__top"><label for="c-price">Average stand price</label><output id="c-price-out"></output></div>
+            <input type="range" id="c-price" min="100" max="3000" step="50" value="700">
+          </div>
+          <div class="calc__result">
+            <p class="small" style="margin:0;font-weight:700">You keep</p>
+            <p class="calc__keep" id="c-keep"></p>
+            <div class="line"><span>Stand sales</span><span id="c-sales"></span></div>
+            <div class="line"><span>Commission</span><span id="c-comm"></span></div>
+            <div class="line"><span>Listing fee</span><span id="c-list"></span></div>
+          </div>
+          <p class="small" style="margin:12px 0 0">Example figures. Final pricing to be confirmed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="section-head"><h2>Questions organisers ask</h2></div>
+      <div class="faq">
+        <details><summary>Can I bring the exhibitors I already work with?</summary><p>Yes. Invite them by email and they can book their usual pitch before you open bookings to everyone else.</p></details>
+        <details><summary>When do I get paid?</summary><p>Stand payments are paid out weekly to your bank account, minus commission. Deposits are paid out when they're received.</p></details>
+        <details><summary>Do I have to accept every booking?</summary><p>No. Set any zone to "apply to book" and nothing is charged until you approve the exhibitor.</p></details>
+        <details><summary>What happens if my event is cancelled?</summary><p>[Cancellation and refund policy to be confirmed.]</p></details>
+        <details><summary>Can my team log in too?</summary><p>Yes. Add colleagues to your organiser account and choose who can see payouts.</p></details>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="cta-band">
+        <h2>Ready to open your stands?</h2>
+        <a class="btn btn--ink" href="signup.html?role=organiser">List your event</a>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("public", "for-organisers");
+    renderFooter();
+
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- Hero: a floor plan that sells out ---------- */
+    const zoneByRow = [ZONES[0], ZONES[1], ZONES[1], ZONES[2], ZONES[3]]; // sponsor, wellbeing x2, market, food
+    const grid = document.getElementById("so-grid");
+    const cells = [];
+    for (let r = 0; r < 5; r++) {
+      for (let c = 0; c < 10; c++) {
+        if (r < 2 && c >= 3 && c <= 6) {
+          if (r === 0 && c === 3) { const s = document.createElement("span"); s.className = "stage"; s.textContent = "Main stage"; grid.appendChild(s); }
+          continue;
+        }
+        const z = zoneByRow[r];
+        const s = document.createElement("span");
+        s.style.setProperty("--c", z.colour);
+        grid.appendChild(s);
+        cells.push({ el: s, zone: z });
+      }
+    }
+    let total = 0, n = 0;
+    const totalEl = document.getElementById("so-total"), feed = document.getElementById("so-feed");
+    const order = cells.map((_, i) => i).sort(() => Math.random() - .5).slice(0, 34);
+    function sell(i, announce) {
+      const cell = cells[i];
+      cell.el.classList.add("is-sold");
+      total += cell.zone.price;
+      totalEl.textContent = money(total);
+      if (announce) feed.textContent = `${EXHIBITORS[n % EXHIBITORS.length].name} booked a stand in ${cell.zone.name}`;
+      n++;
+    }
+    if (reduce) { order.forEach(i => sell(i, false)); feed.textContent = `${order.length} of ${cells.length} stands sold`; }
+    else {
+      let k = 0;
+      setTimeout(function tick() {
+        if (k >= order.length) { feed.textContent = `${order.length} of ${cells.length} stands sold`; return; }
+        sell(order[k++], true);
+        setTimeout(tick, 650);
+      }, 700);
+    }
+
+    /* ---------- Feature demos ---------- */
+    const mini = document.getElementById("mini-plan");
+    const layout = [
+      "wwww..xxxxxx..ss",
+      "wwww..xxxxxx..ss",
+      "................",
+      "mmmmmmm...ffffff",
+      "mmmmmmm..ee.ffff"
+    ].join("");
+    const colourFor = { s: ZONES[0].colour, w: ZONES[1].colour, m: ZONES[2].colour, f: ZONES[3].colour };
+    mini.style.gridTemplateColumns = "repeat(16, 1fr)";
+    [...layout].forEach(ch => {
+      const s = document.createElement("span");
+      if (ch === "x") { s.style.background = "var(--ink)"; s.style.borderColor = "var(--ink)"; }
+      else if (ch === "e") { s.style.background = "var(--yellow)"; s.style.borderColor = "var(--yellow)"; }
+      else if (ch === ".") { s.style.borderColor = "transparent"; s.style.background = "transparent"; }
+      else s.style.setProperty("--c", colourFor[ch]);
+      mini.appendChild(s);
+    });
+
+    const demoApps = [
+      { name: "Stretch Studio", detail: "Fitness & movement, wants Wellbeing Garden", status: null },
+      { name: "Kiln & Co", detail: "Crafts & makers, wants Market Avenue", status: null },
+      { name: "Brew Brothers Coffee", detail: "Food & drink, wants Food Village", status: "Approved" }
+    ];
+    function drawDemoApps() {
+      document.getElementById("demo-apps").innerHTML = demoApps.map((a, i) => `
+        <div class="app-row"${i === 0 ? ' style="border-top:0"' : ""}>
+          <div><p><strong>${a.name}</strong></p><p class="small">${a.detail}</p></div>
+          ${a.status ? `<span class="status ${a.status === "Approved" ? "status--ok" : ""}">${a.status}</span>`
+            : `<div class="actions"><button class="btn btn--teal btn--sm" data-i="${i}" data-act="Approved">Approve</button><button class="btn btn--outline btn--sm" data-i="${i}" data-act="Declined">Decline</button></div>`}
+        </div>`).join("");
+    }
+    document.getElementById("demo-apps").addEventListener("click", e => {
+      const b = e.target.closest("[data-act]"); if (!b) return;
+      demoApps[b.dataset.i].status = b.dataset.act; drawDemoApps();
+    });
+    drawDemoApps();
+
+    const initials = (name) => name.split(/\s+/).filter(w => /[A-Za-z]/.test(w[0])).slice(0, 2).map(w => w[0]).join("");
+    const topColour = { pink: "var(--pink)", teal: "var(--teal)", yellow: "var(--yellow)", violet: "var(--violet)" };
+    document.getElementById("demo-ex").innerHTML = EXHIBITORS.filter(e => ["stretch-studio", "kiln-and-co"].includes(e.id)).map(e => `
+      <div class="ex-card">
+        <div class="ex-card__top" style="background:${topColour[e.colour]}"><span class="ex-card__mono">${initials(e.name)}</span></div>
+        <div class="ex-card__body"><h3>${e.name}</h3><p class="ex-card__meta">${e.cat}, ${e.city}</p>
+          <div class="ex-card__foot"><span class="tick">Insurance on file</span></div></div>
+      </div>`).join("");
+
+    /* ---------- Pricing ---------- */
+    document.getElementById("p-listing").textContent = money(PRICING.listingFee);
+    document.getElementById("p-comm").textContent = (PRICING.commission * 100) + "%";
+    document.getElementById("p-fee").textContent = (PRICING.bookingFee * 100) + "%";
+
+    const cs = document.getElementById("c-stands"), cp = document.getElementById("c-price");
+    function calc() {
+      const sales = cs.value * cp.value, comm = sales * PRICING.commission;
+      document.getElementById("c-stands-out").textContent = cs.value;
+      document.getElementById("c-price-out").textContent = money(Number(cp.value));
+      document.getElementById("c-sales").textContent = money(sales);
+      document.getElementById("c-comm").textContent = "−" + money(Math.round(comm));
+      document.getElementById("c-list").textContent = "−" + money(PRICING.listingFee);
+      document.getElementById("c-keep").textContent = money(Math.round(sales - comm - PRICING.listingFee));
+    }
+    cs.addEventListener("input", calc); cp.addEventListener("input", calc); calc();
+  </script>
+</body>
+</html>

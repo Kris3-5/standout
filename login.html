@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff00b1'/></svg>">
+  <title>Log in · StandOut</title>
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="auth auth--narrow">
+    <section id="login-form-wrap" style="padding:0">
+      <h1>Welcome back</h1>
+      <p class="auth__lead muted">Enter your email and we'll send you a link to log in.</p>
+      <button class="btn btn--google btn--block" type="button" id="google">Continue with Google</button>
+      <div class="or-line">or use your email</div>
+      <form class="form-stack" id="login-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" required aria-describedby="email-err">
+          <p class="field-error" id="email-err" hidden>Enter an email address like name@business.co.uk</p>
+        </div>
+        <button class="btn btn--pink btn--block" type="submit">Email me a login link</button>
+      </form>
+      <p class="small muted" style="margin-top:22px">Just looking around? <a href="organiser.html">Open the organiser demo</a> or <a href="exhibitor.html">the exhibitor demo</a>.</p>
+    </section>
+
+    <section id="inbox" class="inbox" hidden style="padding-top:10px">
+      <div class="inbox__icon" aria-hidden="true">✉</div>
+      <h1>Check your inbox</h1>
+      <p class="muted">We sent a login link to <strong id="sent-to"></strong>. It works for 15 minutes.</p>
+      <div style="display:grid;gap:10px;margin-top:22px">
+        <button class="btn btn--outline btn--block" type="button" id="resend">Send the link again</button>
+        <button class="btn btn--block" type="button" id="change" style="background:none">Use a different email</button>
+      </div>
+      <p class="small muted" style="margin-top:22px">Preview shortcut: <a href="organiser.html">continue as organiser</a> or <a href="exhibitor.html">continue as exhibitor</a>.</p>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    renderHeader("auth", "login");
+    renderFooter();
+
+    const email = document.getElementById("email"), err = document.getElementById("email-err");
+    const form = document.getElementById("login-form-wrap"), inbox = document.getElementById("inbox");
+    document.getElementById("login-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      err.hidden = ok; email.setAttribute("aria-invalid", !ok);
+      if (!ok) { email.focus(); return; }
+      document.getElementById("sent-to").textContent = email.value.trim();
+      form.hidden = true; inbox.hidden = false;
+    });
+    document.getElementById("resend").onclick = () => toast("Login link sent again");
+    document.getElementById("change").onclick = () => { inbox.hidden = true; form.hidden = false; email.focus(); };
+    document.getElementById("google").onclick = () => toast("Google sign-in isn't connected in the preview");
+  </script>
+</body>
+</html>
